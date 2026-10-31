@@ -1,0 +1,29 @@
+{
+  "Days": [
+    {
+      "Date": "2026-10-01",
+      "Desktop": 0,
+      "Mobile": 0,
+      "WebMail": 1,
+      "Unknown": 0
+    },
+    {
+      "Date": "2026-10-05",
+      "Desktop": 6,
+      "Mobile": 0,
+      "WebMail": 4,
+      "Unknown": 0
+    },
+    {
+      "Date": "2026-10-21",
+      "Desktop": 0,
+      "Mobile": 0,
+      "WebMail": 8,
+      "Unknown": 0
+    }
+  ],
+  "Desktop": 10,
+  "Mobile": 0,
+  "WebMail": 17,
+  "Unknown": 0
+}

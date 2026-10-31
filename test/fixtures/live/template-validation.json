@@ -1,0 +1,34 @@
+{
+  "AllContentIsValid": false,
+  "Subject": {
+    "ContentIsValid": false,
+    "ValidationErrors": [
+      {
+        "Message": "Нет значения для {{name}}: в TestRenderModel нет такого ключа",
+        "Line": 1,
+        "CharacterPosition": 21
+      }
+    ],
+    "RenderedContent": "Заказ 1042 для {{name}}"
+  },
+  "HtmlBody": {
+    "ContentIsValid": false,
+    "ValidationErrors": [
+      {
+        "Message": "Нет значения для {{name}}: в TestRenderModel нет такого ключа",
+        "Line": 1,
+        "CharacterPosition": 12
+      },
+      {
+        "Message": "Незакрытый фрагмент: после «{{» нет «}}»",
+        "Line": 1,
+        "CharacterPosition": 22
+      }
+    ],
+    "RenderedContent": "<p>Привет, {{name}}! {{broken</p>"
+  },
+  "SuggestedTemplateModel": {
+    "{{order}}": "1042",
+    "{{name}}": "name_Value"
+  }
+}

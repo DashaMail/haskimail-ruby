@@ -1,0 +1,247 @@
+module Haskimail
+  class ApiObject
+    def method_missing: (Symbol name, *untyped args) ?{ (?) -> untyped } -> untyped
+    def respond_to_missing?: (Symbol name, ?bool include_private) -> bool
+    private def reader_name?: (untyped name) -> untyped
+    private def exact: (untyped key) -> untyped
+    private def setup: (untyped frozen_data) -> untyped
+    private def resolve: (untyped key) -> String?
+    # @api private (protected in Ruby)
+    def data: () -> Hash[String, untyped]
+  end
+end
+module Haskimail
+  class Attachment
+    def inspect: () -> ::String
+    def self.header_text!: (untyped value, untyped label) -> untyped
+  end
+end
+module Haskimail
+  class BaseClient
+    def token_header: () -> untyped
+    def build_resources: () -> nil
+    private def build_request: (untyped method, untyped path, untyped query, untyped body, untyped idempotent) -> untyped
+    private def build_url: (untyped path, untyped query) -> untyped
+    private def checked: (untyped request, untyped response, untyped data) -> untyped
+    private def attempt_request: (untyped request, untyped attempt) -> untyped
+    private def pause: (untyped attempt, untyped response, untyped reason) -> untyped
+    private def log_path: (untyped request) -> untyped
+    private def log: (untyped level) { (?) -> untyped } -> untyped
+    private def monotonic_now: () -> untyped
+    private def build_user_agent: () -> untyped
+  end
+end
+module Haskimail
+  class ServerClient
+    def token_header: () -> untyped
+    def build_resources: () -> untyped
+  end
+  class AccountClient
+    def token_header: () -> untyped
+    def build_resources: () -> untyped
+  end
+end
+module Haskimail
+  class Configuration
+    private def redacted_proxy: () -> (nil | untyped | ::String)
+    private def positive_number!: (untyped name, untyped value) -> untyped
+  end
+end
+module Haskimail
+  module HTTP
+    class NetHttpTransport
+      class ResponseTooLarge < StandardError
+      end
+      CONNECT_ERRORS: ::Array[untyped]
+      EXCHANGE_ERRORS: ::Array[untyped]
+      METHODS: { get: untyped, post: untyped, put: untyped, patch: untyped, delete: untyped }
+      def inspect: () -> ::String
+      private def connect: (untyped http, untyped uri) -> untyped
+      private def exchange: (untyped http, untyped net_request, untyped uri) -> untyped
+      private def build_http: (untyped uri, untyped open_timeout, untyped read_timeout, untyped write_timeout) -> untyped
+      private def build_request: (untyped request, untyped uri) -> untyped
+      private def decode: (String? value) -> String?
+      private def use_proxy?: (URI::Generic uri) -> bool
+      def self.cert_store: (String ca_file) -> OpenSSL::X509::Store
+      def self.normalize_no_proxy: (String? value) -> (String | false)
+      private def resolve: (String host) -> String?
+    end
+  end
+end
+module Haskimail
+  module HTTP
+    module ResponseParser
+      private def parse: (untyped response) -> untyped
+      private def blank_body?: (untyped body) -> untyped
+      private def error_code: (untyped data) -> untyped
+      private def malformed_error_code?: (untyped data) -> untyped
+      private def success?: (untyped response, untyped data) -> (false | true | untyped)
+      private def api_error: (untyped response, untyped data) -> untyped
+      private def unexpected_body_error: (untyped request, untyped response, ?::String reason) -> untyped
+      private def error_class: (untyped status) -> untyped
+    end
+  end
+end
+module Haskimail
+  module HTTP
+    class RetryPolicy
+      private def retry_after: (untyped response) -> untyped
+    end
+  end
+end
+module Haskimail
+  module Resources
+    class Servers
+      private def validate!: (untyped payload) -> untyped
+      private def check_value!: (untyped payload, untyped key, untyped allowed) ?{ (untyped) -> untyped } -> (nil | untyped)
+    end
+  end
+end
+module Haskimail
+  module Resources
+    class Base
+      def inspect: () -> ::String
+      private def api_get: (untyped path, ?untyped? query) -> untyped
+      private def api_post: (untyped path, ?untyped? body, ?idempotent: untyped?) -> untyped
+      private def api_put: (untyped path, ?untyped? body, ?idempotent: untyped?) -> untyped
+      private def api_patch: (untyped path, ?untyped? body) -> untyped
+      private def api_delete: (untyped path) -> untyped
+      private def object: (untyped data) -> untyped
+      private def send_result: (untyped data) -> untyped
+      private def run: (untyped paginator, untyped block) -> untyped
+      private def path: (untyped template, *untyped segments) -> untyped
+      private def query: (untyped params, untyped mapping) -> untyped
+      private def merge_params: (untyped params, untyped fields) -> untyped
+      private def paginate: (untyped items_key, page_size: untyped, ?max_window: untyped?) { (untyped, untyped) -> untyped } -> untyped
+      private def check_paging!: (untyped count, untyped offset, ?max_count: untyped?, ?max_window: untyped?) -> (nil | untyped)
+      private def check_integer!: (untyped name, untyped value, untyped min, untyped max) -> (nil | untyped)
+      private def check_page_size!: (untyped page_size, Integer max) -> void
+      private def reject_paging!: (untyped filters) -> (nil | untyped)
+    end
+  end
+  class Paginator
+    def inspect: () -> ::String
+  end
+end
+module Haskimail
+  module Resources
+    class Emails
+      private def prepare: (untyped message) -> untyped
+      private def prepare_plain: (untyped message) -> untyped
+      private def prepare_template: (untyped message) -> untyped
+      private def prepare_batch_item: (untyped message) -> untyped
+      private def api_fields: (untyped message) -> untyped
+      private def canonicalize: (untyped hash, untyped fields, untyped label) -> untyped
+      private def field_key: (untyped key) -> String?
+      private def prepare_batch: (untyped messages) { (untyped) -> untyped } -> untyped
+      private def check_batch_size!: (untyped payload) -> untyped
+      private def expand_headers: (untyped message) -> untyped
+      private def headers_key?: (untyped key) -> untyped
+      private def join_addresses!: (untyped payload) -> untyped
+      private def check_header_fields!: (untyped payload) -> untyped
+      private def check_limits!: (untyped payload) -> (nil | untyped)
+      private def utf16_length: (untyped value) -> (0 | untyped)
+      private def unsafe?: (untyped value) -> untyped
+      private def normalize_headers!: (untyped payload) -> (nil | untyped)
+      private def check_size!: (untyped payload) -> (nil | untyped)
+      private def normalize_attachments!: (untyped payload) -> (nil | untyped)
+      private def batch_result: (untyped data, untyped expected) -> untyped
+    end
+  end
+end
+module Haskimail
+  module Resources
+    class OutboundSearch
+      private def search: (untyped endpoint, untyped filters, untyped mapping) -> untyped
+      private def iterate: (untyped endpoint, untyped items_key, untyped filters, untyped mapping, untyped page_size) -> untyped
+    end
+    class InboundMessages
+      private def build_query: (untyped filters) -> untyped
+    end
+  end
+end
+module Haskimail
+  module Resources
+    class Bounces
+      private def build_query: (untyped filters) -> untyped
+    end
+    class Suppressions
+      private def payload: (untyped emails) -> { "Suppressions" => untyped }
+    end
+    class Webhooks
+      private def check_url!: (untyped url) -> untyped
+      private def normalize_triggers: (untyped triggers) -> untyped
+      private def enabled_flag: (untyped name, untyped value) -> untyped
+    end
+  end
+end
+module Haskimail
+  # @api private
+  module Util
+    IRREGULAR_KEYS: Hash[Symbol, String]
+    OPAQUE_KEYS: Array[String]
+    MOSCOW_OFFSET: String
+    MOSCOW_UTC_OFFSET: Integer
+    UNSAFE_HEADER_CHARS: Regexp
+    def self?.api_key: (untyped key) -> String
+    def self?.to_api: (untyped value, ?Integer depth) -> untyped
+    def self?.utf8: (String text) -> String
+    def self?.utf8_strings: (untyped value, ?Integer depth) -> untyped
+    MAX_DEPTH: Integer
+    def self?.check_depth!: (Integer depth) -> void
+    def self?.blank?: (untyped value) -> bool
+    def self?.strip_text: (untyped value, String field) -> String
+    def self?.path: (String template, *untyped segments) -> String
+    def self?.escape_segment: (untyped value) -> String
+    def self?.query: (Hash[untyped, untyped] params, Hash[Symbol, String] mapping) -> Hash[String, String]
+    def self?.query_value: (untyped value) -> String
+    def self?.format_time: (Time time, ?separator: String) -> String
+    def self?.format_date: (untyped value) -> String?
+    def self?.parse_time: (untyped value) -> Time?
+    def self?.deep_freeze: (untyped value) -> untyped
+    def self?.deep_dup: (untyped value) -> untyped
+    def self?.parse_json: (String body) -> untyped
+    def self?.generate_json: (untyped value) -> String
+  end
+end
+module Haskimail
+  module Webhook
+    private def construct_event: (untyped payload, signing_key: untyped, ?max_size: untyped) -> untyped
+    private def parse_event: (untyped payload, ?max_size: untyped) -> untyped
+    private def valid_signature?: (untyped event, signing_key: untyped) -> (false | untyped)
+    private def parse_inbound: (untyped payload, ?max_size: untyped) -> untyped
+    private def parse_object: (untyped payload, untyped limit) -> untyped
+    def self.parse_object: (untyped payload, Integer limit) -> Hash[String, untyped]
+    def self.huge_number?: (String text) -> bool
+    private def huge_number?: (String text) -> bool
+  end
+end
+module Haskimail
+  # @api private
+  module Redacted : Object
+    def encode_with: (untyped coder) -> void
+    def marshal_dump: () -> bot
+    def as_json: (*untyped) -> String
+    def to_json: (*untyped args) -> String
+  end
+
+  class BaseClient
+    include Redacted
+  end
+
+  module HTTP
+    class Request
+      include Redacted
+    end
+
+    class NetHttpTransport
+      include Redacted
+    end
+  end
+
+  module Resources
+    class Base
+      include Redacted
+    end
+  end
+end

@@ -1,0 +1,27 @@
+{
+  "Days": [
+    {
+      "Date": "2026-10-01",
+      "Yandex Mail": 1
+    },
+    {
+      "Date": "2026-10-04",
+      "Apple Mail": 1
+    },
+    {
+      "Date": "2026-10-05",
+      "Apple Mail": 6,
+      "Yandex Mail": 2,
+      "Gmail": 2
+    },
+    {
+      "Date": "2026-10-21",
+      "Mail.ru": 4,
+      "Yandex Mail": 4
+    }
+  ],
+  "Yandex Mail": 10,
+  "Apple Mail": 10,
+  "Mail.ru": 5,
+  "Gmail": 2
+}

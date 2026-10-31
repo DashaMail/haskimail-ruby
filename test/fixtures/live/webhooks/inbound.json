@@ -1,0 +1,57 @@
+{
+  "FromName": "shop@example.com",
+  "MessageStream": "2083",
+  "From": "shop@example.com",
+  "FromFull": {
+    "Email": "shop@example.com",
+    "Name": "shop@example.com",
+    "MailboxHash": ""
+  },
+  "To": "\"5f0e7c1d9a3b4e2f8c6d0a1b3e5f7c90+ticket-77@inbound.haskimail.ru\" <5f0e7c1d9a3b4e2f8c6d0a1b3e5f7c90+ticket-77@inbound.haskimail.ru>",
+  "ToFull": [
+    {
+      "Email": "5f0e7c1d9a3b4e2f8c6d0a1b3e5f7c90+ticket-77@inbound.haskimail.ru",
+      "Name": "5f0e7c1d9a3b4e2f8c6d0a1b3e5f7c90+ticket-77@inbound.haskimail.ru",
+      "MailboxHash": "ticket-77"
+    }
+  ],
+  "Cc": "ivan@example.com",
+  "CcFull": [
+    {
+      "Email": "ivan@example.com",
+      "Name": "",
+      "MailboxHash": ""
+    }
+  ],
+  "Bcc": "",
+  "BccFull": [],
+  "OriginalRecipient": "5f0e7c1d9a3b4e2f8c6d0a1b3e5f7c90+ticket-77@inbound.haskimail.ru",
+  "Subject": "SDK webhook check: inbound",
+  "MessageID": "8d1f6c2e-4b7a-4e19-9c3d-2a5b7e0f1c84",
+  "ReplyTo": "",
+  "MailboxHash": "ticket-77",
+  "Date": "Sat, 31 Oct 2026 21:31:24 +0300",
+  "TextBody": "Входящее письмо для проверки вебхука.\r\n\r\n> цитата",
+  "HtmlBody": "<p>Входящее письмо для проверки вебхука.</p>",
+  "StrippedTextReply": "Входящее письмо для проверки вебхука.",
+  "Tag": "",
+  "Headers": [
+    {
+      "Name": "MIME-Version",
+      "Value": "1.0"
+    },
+    {
+      "Name": "Message-ID",
+      "Value": "<0b4e9a1c-7d2f-4c6e@example.com>"
+    }
+  ],
+  "Attachments": [
+    {
+      "Name": "note.txt",
+      "Content": "0J/RgNC40LLQtdGCLCBIYXNraW1haWwh",
+      "ContentType": "text/plain",
+      "ContentLength": 24,
+      "ContentID": ""
+    }
+  ]
+}

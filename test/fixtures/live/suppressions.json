@@ -1,0 +1,10 @@
+{
+  "Suppressions": [
+    {
+      "EmailAddress": "gone@example.com",
+      "SuppressionReason": "HardBounce",
+      "Origin": "Recipient",
+      "CreatedAt": "2026-07-22 15:30:01"
+    }
+  ]
+}

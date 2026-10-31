@@ -1,0 +1,22 @@
+{
+  "TotalCount": 27,
+  "Opens": [
+    {
+      "Recipient": "petr@example.com",
+      "ReceivedAt": "2026-10-23 12:52:25",
+      "Tag": "0",
+      "From": "",
+      "MessageID": "3d4e5f60718293a4b5c6d7e8f90a1b2c",
+      "Subject": "123🚀",
+      "MessageStream": "2083",
+      "RecordType": "Open",
+      "Os": "Linux",
+      "Browser": "MailRuBot",
+      "Webservice": "mail",
+      "UserAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)",
+      "Language": "en-US,en",
+      "Region": "26",
+      "Country": "RU"
+    }
+  ]
+}

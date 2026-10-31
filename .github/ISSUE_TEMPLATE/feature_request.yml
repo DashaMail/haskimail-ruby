@@ -1,0 +1,11 @@
+name: Предложение
+description: Новый метод, поле или улучшение
+labels: [enhancement]
+body:
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Что нужно
+      description: Какую задачу решает. Если это метод API — ссылка на раздел документации Haskimail.
+    validations:
+      required: true

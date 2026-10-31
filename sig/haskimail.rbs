@@ -1,0 +1,618 @@
+module Haskimail
+  VERSION: String
+  TEST_TOKEN: String
+
+  type json = Hash[String, untyped] | Array[untyped] | String | Integer | Float | bool | nil
+  type params = Hash[Symbol | String, untyped]
+  type id = Integer | String
+
+  def self.configuration: () -> Configuration
+  def self.configure: () { (Configuration) -> void } -> void
+  def self.reset_configuration!: () -> Configuration
+  def self.parse_time: (untyped value) -> Time?
+
+  class Error < StandardError
+  end
+
+  class ConfigurationError < Error
+  end
+
+  class ValidationError < Error
+  end
+
+  class SignatureVerificationError < Error
+  end
+
+  class WebhookPayloadTooLargeError < ValidationError
+  end
+
+  class ConnectionError < Error
+    attr_reader original_error: Exception?
+    def initialize: (?String? message, ?original_error: Exception?, ?request_sent: bool) -> void
+    def request_sent?: () -> bool
+  end
+
+  class TimeoutError < ConnectionError
+  end
+
+  class TlsError < ConnectionError
+  end
+
+  class ApiError < Error
+    attr_reader http_status: Integer?
+    attr_reader error_code: Integer?
+    attr_reader api_message: String?
+    attr_reader response_body: String?
+    attr_reader response_headers: Hash[String, String]
+    def initialize: (?String? message, ?http_status: Integer?, ?error_code: Integer?, ?api_message: String?,
+                     ?response_body: String?, ?response_headers: Hash[String, String]) -> void
+    def error_code_description: () -> String?
+  end
+
+  class AuthenticationError < ApiError
+  end
+
+  class ForbiddenError < ApiError
+  end
+
+  class NotFoundError < ApiError
+  end
+
+  class PayloadTooLargeError < ApiError
+  end
+
+  class UnprocessableEntityError < ApiError
+  end
+
+  class RateLimitError < ApiError
+  end
+
+  class ServerError < ApiError
+  end
+
+  class ServiceUnavailableError < ServerError
+  end
+
+  class UnexpectedResponseError < ApiError
+  end
+
+  module ErrorCodes
+    INVALID_API_TOKEN: Integer
+    NOT_FOUND_OR_INCOMPLETE_REQUEST: Integer
+    INTERNAL_ERROR: Integer
+    UNKNOWN_API_METHOD: Integer
+    MISSING_REQUIRED_FIELDS: Integer
+    ACCOUNT_CANNOT_SEND: Integer
+    INVALID_EMAIL_ADDRESS: Integer
+    ACTION_NOT_ALLOWED: Integer
+    ATTACHMENT_TOO_LARGE: Integer
+    INVALID_ATTACHMENT_TYPE: Integer
+    SENDING_UNAVAILABLE: Integer
+    TEMPORARY_SENDING_ERROR: Integer
+    INVALID_HEADERS: Integer
+    SENDER_SIGNATURE_NOT_CONFIRMED: Integer
+    INVALID_FIELD_VALUE_OR_BATCH: Integer
+    SENDER_NOT_CONFIRMED: Integer
+    INVALID_REQUEST_FIELD: Integer
+    FORBIDDEN_ATTACHMENT_TYPE: Integer
+    RECIPIENT_NOT_CONFIRMED: Integer
+    TEMPLATE_NOT_FOUND: Integer
+    MESSAGE_STREAM_NOT_FOUND: Integer
+    CANNOT_SEND_VIA_INBOUND_STREAM: Integer
+    INVALID_MESSAGES_QUERY: Integer
+    MESSAGE_NOT_FOUND: Integer
+    BYPASS_ONLY_BLOCKED: Integer
+    RETRY_ONLY_FAILED: Integer
+    INVALID_RULE_REQUEST: Integer
+    RULE_ALREADY_EXISTS: Integer
+    RULE_NOT_FOUND: Integer
+    INVALID_RULE: Integer
+    DOMAIN_OR_SERVER_NOT_FOUND: Integer
+    DOMAIN_ALREADY_EXISTS: Integer
+    INVALID_DOMAIN: Integer
+    TEMPLATE_VALIDATION_NOTHING_TO_CHECK: Integer
+    INVALID_INBOUND_DOMAIN: Integer
+    INBOUND_DOMAIN_IN_USE: Integer
+    INVALID_INBOUND_HOOK_URL: Integer
+    INBOUND_DOMAIN_MISSING_MX: Integer
+    INVALID_INBOUND_SPAM_THRESHOLD: Integer
+    INVALID_MESSAGE_STREAM_TYPE: Integer
+    CANNOT_CREATE_INBOUND_STREAM: Integer
+    CANNOT_ARCHIVE_INBOUND_STREAM: Integer
+    DESCRIPTIONS: Hash[Integer, String]
+    def self.describe: (Integer? code) -> String?
+  end
+
+  class Configuration
+    DEFAULT_BASE_URL: String
+    ATTRIBUTES: Array[Symbol]
+
+    attr_reader base_url: String
+    attr_reader open_timeout: Numeric
+    attr_reader read_timeout: Numeric
+    attr_reader write_timeout: Numeric
+    attr_reader max_retries: Integer
+    attr_reader logger: untyped
+    attr_reader proxy: URI::Generic | false | nil
+    attr_reader ca_file: String?
+    attr_reader user_agent: String?
+
+    def initialize: (**untyped options) -> void
+    def update: (**untyped options) -> self
+    def base_url=: (String value) -> void
+    def open_timeout=: (Numeric value) -> void
+    def read_timeout=: (Numeric value) -> void
+    def write_timeout=: (Numeric value) -> void
+    def max_retries=: (Integer value) -> void
+    def logger=: (untyped value) -> void
+    def proxy=: (String | URI::Generic | false | nil value) -> void
+    def ca_file=: (String? value) -> void
+    def user_agent=: (String? value) -> void
+    def to_h: () -> Hash[Symbol, untyped]
+    def inspect: () -> String
+    alias to_s inspect
+    def marshal_dump: () -> bot
+    def encode_with: (untyped coder) -> void
+    def self.parse_proxy: (untyped value, ?source: String) -> URI::Generic
+    def self.normalize_base_url: (untyped value) -> String
+  end
+
+  class ApiObject
+    def initialize: (Hash[untyped, untyped] data) -> void
+    def []: (untyped key) -> untyped
+    def fetch: (String | Symbol key, *untyped default) ?{ (String | Symbol) -> untyped } -> untyped
+    def key?: (untyped key) -> bool
+    alias include? key?
+    def dig: (String | Symbol key, *untyped rest) -> untyped
+    def keys: () -> Array[String]
+    def each: () { (String, untyped) -> void } -> self
+            | () -> Enumerator[[String, untyped], self]
+    def to_h: () -> Hash[String, untyped]
+    alias to_hash to_h
+    def to_json: (*untyped args) -> String
+    def ==: (untyped other) -> bool
+    def eql?: (untyped other) -> bool
+    def hash: () -> Integer
+    def marshal_dump: () -> Hash[String, untyped]
+    def marshal_load: (Hash[String, untyped] data) -> void
+    def inspect: () -> String
+    alias to_s inspect
+    def self.normalize: (String | Symbol key) -> String
+    def self.wrap: (untyped value) -> untyped
+  end
+
+  class SendResult < ApiObject
+    def error_code: () -> Integer?
+    def success?: () -> bool
+    def message_ids: () -> Array[String]
+    def submitted_at_time: () -> Time?
+  end
+
+  class BatchResult
+    include Enumerable[SendResult]
+
+    attr_reader results: Array[SendResult]
+    def initialize: (Array[SendResult] results) -> void
+    def each: () { (SendResult) -> void } -> self
+            | () -> Enumerator[SendResult, self]
+    def []: (Integer index) -> SendResult?
+    def size: () -> Integer
+    alias length size
+    def empty?: () -> bool
+    def success?: () -> bool
+    def successful: () -> Array[SendResult]
+    def failed: () -> Array[SendResult]
+    def to_a: () -> Array[SendResult]
+    def as_json: (*untyped) -> Array[Hash[String, untyped]]
+    def to_json: (*untyped args) -> String
+    def ==: (untyped other) -> bool
+    def eql?: (untyped other) -> bool
+    def hash: () -> Integer
+    def inspect: () -> String
+    alias to_s inspect
+  end
+
+  class Paginator
+    include Enumerable[ApiObject]
+
+    def initialize: (items_key: String, page_size: Integer, ?max_window: Integer?) {
+      (Integer, Integer) -> untyped
+    } -> void
+    def each: () { (ApiObject) -> void } -> self
+            | () -> Enumerator[ApiObject, self]
+    private def last_page?: (untyped total, Integer size, Integer count, Integer offset) -> bool
+  end
+
+  class Attachment
+    FORBIDDEN_EXTENSIONS: Array[String]
+    MAX_MESSAGE_SIZE: Integer
+    MIME_TYPES: Hash[String, String]
+    DEFAULT_CONTENT_TYPE: String
+    CONTENT_TYPE_FORMAT: Regexp
+
+    attr_reader name: String
+    attr_reader content_type: String
+    attr_reader content_id: String?
+
+    def self.from_file: (String | _ToS path, ?name: String?, ?content_type: String?, ?content_id: String?) -> Attachment
+    def initialize: (name: String, content: String, ?content_type: String?, ?content_id: String?) -> void
+    def inline?: () -> bool
+    def encoded_size: () -> Integer
+    def to_haskimail: () -> Hash[String, String]
+    alias to_h to_haskimail
+    def self.validate_name!: (untyped name) -> String
+    def self.validate_content_type!: (untyped value) -> String
+    def self.validate_content_id!: (untyped value) -> String
+    def self.extension_of: (String name) -> String
+    def self.detect_content_type: (String name) -> String
+  end
+
+  module HTTP
+    SENSITIVE_HEADERS: Array[String]
+
+    class Request
+      attr_reader method: Symbol
+      attr_reader url: String
+      attr_reader headers: Hash[String, String]
+      attr_reader body: String?
+      attr_reader idempotent: bool?
+      def initialize: (method: Symbol, url: String, headers: Hash[String, String], body: String?,
+                       ?idempotent: bool?) -> void
+      def idempotent?: () -> bool
+      def inspect: () -> String
+      alias to_s inspect
+      def pretty_print: (untyped printer) -> void
+    end
+
+    class Response
+      attr_reader status: Integer
+      attr_reader headers: Hash[String, String]
+      attr_reader body: String
+      def initialize: (status: Integer, headers: Hash[String, String], body: String) -> void
+      def ==: (untyped other) -> bool
+    end
+
+    interface _Transport
+      def call: (Request request, open_timeout: Numeric, read_timeout: Numeric, write_timeout: Numeric) -> Response
+    end
+
+    class RetryPolicy
+      RETRYABLE_STATUSES: Array[Integer]
+      REFUSED_STATUSES: Array[Integer]
+      RETRYABLE_ERROR_CODES: Array[Integer]
+      IDEMPOTENT_RETRYABLE_ERROR_CODES: Array[Integer]
+      MAX_RETRY_AFTER: Integer
+      BASE_DELAY: Float
+      MAX_DELAY: Float
+
+      attr_reader max_retries: Integer
+      def initialize: (max_retries: Integer, ?random: untyped, ?clock: ^() -> Time) -> void
+      def retry_response?: (Request request, Response response, Integer? error_code, Integer attempt) -> bool
+      def retry_error?: (Request request, ConnectionError error, Integer attempt) -> bool
+      def delay: (Integer attempt, ?Response? response) -> Float
+    end
+
+    module ResponseParser
+      ERROR_CLASSES: Hash[Integer, singleton(ApiError)]
+      def self.parse: (Response response) -> untyped
+      def self.blank_body?: (untyped body) -> bool
+      def self.error_code: (untyped data) -> Integer?
+      def self.malformed_error_code?: (untyped data) -> bool
+      def self.success?: (Response response, untyped data) -> bool
+      def self.api_error: (Response response, untyped data) -> ApiError
+      def self.unexpected_body_error: (Request request, Response response, ?String reason) -> UnexpectedResponseError
+      def self.error_class: (Integer status) -> singleton(ApiError)
+    end
+
+    interface _Env
+      def []: (String name) -> String?
+    end
+
+    class NetHttpTransport
+      include _Transport
+      MAX_RESPONSE_SIZE: Integer
+      PROXY_ENV: Array[String]
+      def initialize: (?proxy: URI::Generic | false | nil, ?ca_file: String?, ?env: _Env) -> void
+      def self.env_proxy: (_Env env) -> URI::Generic?
+    end
+  end
+
+  class BaseClient
+    HTTP_METHODS: Array[Symbol]
+
+    attr_reader config: Configuration
+    def initialize: (String? token, ?transport: HTTP::_Transport?, ?sleeper: ^(Float) -> void | nil,
+                     **untyped options) -> void
+    def request: (Symbol method, String path, ?query: Hash[String, untyped]?, ?body: untyped) -> untyped
+    def inspect: () -> String
+    alias to_s inspect
+    def self.validate_token!: (untyped token) -> String
+    def perform: (Symbol method, String path, ?query: Hash[String, untyped]?, ?body: untyped,
+                  ?idempotent: bool?) -> json
+    def expect_object: (untyped data) -> Hash[String, untyped]
+    def wrap: (json data) -> untyped
+  end
+
+  class ServerClient < BaseClient
+    TOKEN_HEADER: String
+    def initialize: (?String? token, ?transport: HTTP::_Transport?, ?sleeper: ^(Float) -> void | nil,
+                     **untyped options) -> void
+    attr_reader emails: Resources::Emails
+    attr_reader templates: Resources::Templates
+    attr_reader messages: Resources::Messages
+    attr_reader opens: Resources::Opens
+    attr_reader clicks: Resources::Clicks
+    attr_reader inbound_messages: Resources::InboundMessages
+    attr_reader bounces: Resources::Bounces
+    attr_reader message_streams: Resources::MessageStreams
+    attr_reader suppressions: Resources::Suppressions
+    attr_reader webhooks: Resources::Webhooks
+    attr_reader inbound_rules: Resources::InboundRules
+    attr_reader stats: Resources::Stats
+  end
+
+  class AccountClient < BaseClient
+    TOKEN_HEADER: String
+    def initialize: (?String? token, ?transport: HTTP::_Transport?, ?sleeper: ^(Float) -> void | nil,
+                     **untyped options) -> void
+    attr_reader servers: Resources::Servers
+    attr_reader domains: Resources::Domains
+    attr_reader templates: Resources::AccountTemplates
+    attr_reader messages: Resources::Messages
+    attr_reader opens: Resources::Opens
+    attr_reader clicks: Resources::Clicks
+    attr_reader bounces: Resources::Bounces
+    attr_reader message_streams: Resources::MessageStreams
+    attr_reader webhooks: Resources::Webhooks
+    attr_reader stats: Resources::Stats
+  end
+
+  module TestAddresses
+    DOMAIN: String
+    HARD_BOUNCE: String
+    SOFT_BOUNCE: String
+    BLOCKED: String
+    SPAM_COMPLAINT: String
+  end
+
+  module Resources
+    class Base
+      PAGING: Hash[Symbol, String]
+      def initialize: (BaseClient client) -> void
+    end
+
+    class Emails < Base
+      MAX_BATCH_SIZE: Integer
+      MAX_BATCH_BYTES: Integer
+      MAX_MESSAGE_BYTES: Integer
+      RECIPIENT_FIELDS: Array[String]
+      BODY_FIELDS: Array[String]
+      TEMPLATE_FIELDS: Array[String]
+      EMAIL_FIELDS: Array[String]
+      HEADER_ITEM_FIELDS: Array[String]
+      ATTACHMENT_FIELDS: Array[String]
+      COMMENT: Regexp
+      HEADER_FIELDS: Array[String]
+      ADDRESS_FIELDS: Array[String]
+      UNSAFE_HEADER_CHARS: Regexp
+      HEADER_NAME: Regexp
+      MAX_RECIPIENTS: Integer
+      MAX_FROM_LENGTH: Integer
+      MAX_SUBJECT_LENGTH: Integer
+      MAX_TAG_LENGTH: Integer
+      MAX_BODY_BYTES: Integer
+      LENGTH_LIMITS: Hash[String, Integer]
+      QUOTED: Regexp
+      ANGLE_ADDR: Regexp
+      def self.count_addresses: (untyped list) -> Integer
+      def deliver: (?params? message, **untyped fields) -> SendResult
+      def deliver_batch: (Array[params] messages) -> BatchResult
+      def deliver_with_template: (?params? message, **untyped fields) -> SendResult
+      def deliver_batch_with_templates: (Array[params] messages) -> BatchResult
+    end
+
+    class Templates < Base
+      def list: (?count: Integer?, ?offset: Integer?) -> ApiObject
+      def each: (?page_size: Integer) -> Paginator
+              | (?page_size: Integer) { (ApiObject) -> void } -> Paginator
+      def get: (id id_or_alias) -> ApiObject
+      def create: (?params? params, **untyped fields) -> ApiObject
+      def update: (id id_or_alias, name: String, subject: String, html_body: String, text_body: String) -> ApiObject
+      def delete: (id id_or_alias) -> ApiObject
+      def validate: (?params? params, **untyped fields) -> ApiObject
+    end
+
+    class AccountTemplates < Templates
+      def create: (?params? params, **untyped fields) -> ApiObject
+      def push: (source_server_id: Integer, destination_server_id: Integer, perform_changes: bool) -> ApiObject
+    end
+
+    class OutboundSearch < Base
+      MAX_PAGE_SIZE: Integer
+      MAX_WINDOW: Integer
+    end
+
+    class Messages < OutboundSearch
+      FILTERS: Hash[Symbol, String]
+      def list: (**untyped filters) -> ApiObject
+      def each: (?page_size: Integer, **untyped filters) ?{ (ApiObject) -> void } -> Paginator
+      def details: (id message_id) -> ApiObject
+    end
+
+    class Opens < OutboundSearch
+      FILTERS: Hash[Symbol, String]
+      MESSAGE_FILTERS: Hash[Symbol, String]
+      def list: (**untyped filters) -> ApiObject
+      def each: (?page_size: Integer, **untyped filters) ?{ (ApiObject) -> void } -> Paginator
+      def for_message: (id message_id, **untyped filters) -> ApiObject
+    end
+
+    class Clicks < OutboundSearch
+      FILTERS: Hash[Symbol, String]
+      MESSAGE_FILTERS: Hash[Symbol, String]
+      def list: (**untyped filters) -> ApiObject
+      def each: (?page_size: Integer, **untyped filters) ?{ (ApiObject) -> void } -> Paginator
+      def for_message: (id message_id, **untyped filters) -> ApiObject
+    end
+
+    class InboundMessages < Base
+      FILTERS: Hash[Symbol, String]
+      STATUSES: Array[String]
+      MAX_PAGE_SIZE: Integer
+      def list: (**untyped filters) -> ApiObject
+      def each: (?page_size: Integer, **untyped filters) ?{ (ApiObject) -> void } -> Paginator
+      def details: (id message_id) -> ApiObject
+      def bypass: (id message_id) -> ApiObject
+      def retry: (id message_id) -> ApiObject
+    end
+
+    class Bounces < Base
+      FILTERS: Hash[Symbol, String]
+      TYPES: Array[String]
+      def delivery_stats: () -> ApiObject
+      def list: (**untyped filters) -> ApiObject
+      def each: (?page_size: Integer, **untyped filters) ?{ (ApiObject) -> void } -> Paginator
+    end
+
+    module Dates
+      KEYS: Array[Symbol]
+      def self.date_only: (Hash[untyped, untyped] filters) -> Hash[untyped, untyped]
+    end
+
+    class MessageStreams < Base
+      TYPES: Array[String]
+      def list: () -> ApiObject
+      def get: (id stream_id) -> ApiObject
+      def create: (name: String, message_stream_type: String | Symbol, ?server_id: Integer?) -> ApiObject
+      def update: (id stream_id, name: String) -> ApiObject
+      def archive: (id stream_id) -> ApiObject
+      def unarchive: (id stream_id) -> ApiObject
+    end
+
+    class Suppressions < Base
+      def list: (id stream_id) -> ApiObject
+      def create: (id stream_id, String | Array[String] emails) -> ApiObject
+      def delete: (id stream_id, String | Array[String] emails) -> ApiObject
+    end
+
+    class Webhooks < Base
+      TRIGGERS: Hash[Symbol, String]
+      def list: () -> ApiObject
+      def get: (id webhook_id) -> ApiObject
+      def create: (url: String, ?message_stream: id?, ?triggers: Hash[untyped, untyped]) -> ApiObject
+      def update: (id webhook_id, ?url: String?, ?triggers: Hash[untyped, untyped]?) -> ApiObject
+      def delete: (id webhook_id) -> ApiObject
+    end
+
+    class InboundRules < Base
+      MAX_PAGE_SIZE: Integer
+      def list: (?count: Integer?, ?offset: Integer?) -> ApiObject
+      def each: (?page_size: Integer) ?{ (ApiObject) -> void } -> Paginator
+      def create: (String rule) -> ApiObject
+      def delete: (id rule_id) -> ApiObject
+    end
+
+    class Stats < Base
+      FILTERS: Hash[Symbol, String]
+      ENDPOINTS: Hash[Symbol, String]
+      def summary: (**untyped filters) -> ApiObject
+      def sends: (**untyped filters) -> ApiObject
+      def bounces: (**untyped filters) -> ApiObject
+      def spam_complaints: (**untyped filters) -> ApiObject
+      def opens: (**untyped filters) -> ApiObject
+      def clicks: (**untyped filters) -> ApiObject
+      def opens_by_platform: (**untyped filters) -> ApiObject
+      def opens_by_email_client: (**untyped filters) -> ApiObject
+      def clicks_by_browser_family: (**untyped filters) -> ApiObject
+      def clicks_by_platform: (**untyped filters) -> ApiObject
+    end
+
+    class Servers < Base
+      COLORS: Array[String]
+      TRACK_LINKS: Array[String]
+      DELIVERY_TYPES: Array[String]
+      def list: (?count: Integer?, ?offset: Integer?) -> ApiObject
+      def each: (?page_size: Integer) ?{ (ApiObject) -> void } -> Paginator
+      def get: (id server_id) -> ApiObject
+      def create: (?params? params, **untyped fields) -> ApiObject
+      def update: (id server_id, ?params? params, **untyped fields) -> ApiObject
+      def delete: (id server_id) -> ApiObject
+    end
+
+    class Domains < Base
+      def list: (?count: Integer?, ?offset: Integer?) -> ApiObject
+      def each: (?page_size: Integer) ?{ (ApiObject) -> void } -> Paginator
+      def get: (id domain_id) -> ApiObject
+      def create: (String name) -> ApiObject
+      def delete: (id domain_id) -> ApiObject
+      def verify_dkim: (id domain_id) -> ApiObject
+      def verify_spf: (id domain_id) -> ApiObject
+    end
+  end
+
+  module Webhook
+    MAX_EVENT_SIZE: Integer
+    MAX_INBOUND_SIZE: Integer
+    RECIPIENT_FORMAT: Regexp
+    MESSAGE_ID_FORMAT: Regexp
+    GUARDED_FIELDS: Array[String]
+    HUGE_NUMBER: Regexp
+    JSON_STRING: Regexp
+    JSON_OBJECT_START: Regexp
+
+    def self.construct_event: (String payload, signing_key: String, ?max_size: Integer) -> Event
+    def self.parse_event: (String payload, ?max_size: Integer) -> Event
+    def self.valid_signature?: (untyped event, signing_key: String) -> bool
+    def self.parse_inbound: (String payload, ?max_size: Integer) -> InboundMessage
+
+    class Event < ApiObject
+      TYPES: Hash[String, Symbol]
+      BOUNCE_CATEGORIES: Hash[String, Symbol]
+      def type: () -> Symbol
+      def sent?: () -> bool
+      def delivered?: () -> bool
+      def bounced?: () -> bool
+      def complained?: () -> bool
+      def opened?: () -> bool
+      def clicked?: () -> bool
+      def subscription_change?: () -> bool
+      def recipient: () -> String?
+      def message_id: () -> String
+      def email: () -> String?
+      def tag: () -> String
+      def metadata: () -> Hash[String, untyped]
+      def server_id: () -> Integer?
+      def stream_id: () -> String?
+      def occurred_at: () -> Time?
+      def bounce_category: () -> Symbol?
+      def suppressed?: () -> bool
+      def idempotency_key: () -> String
+    end
+
+    class InboundMessage < ApiObject
+      def attachments: () -> Array[InboundAttachment]
+      def header: (String | Symbol name) -> String?
+      def spam_score: () -> Float?
+      def inspect: () -> String
+      alias to_s inspect
+      def pretty_print: (untyped printer) -> void
+    end
+
+    class InboundAttachment
+      attr_reader name: String
+      attr_reader content_type: String
+      attr_reader content_id: String
+      attr_reader content: String
+      def initialize: (name: String, content_type: String, content_id: String, content: String) -> void
+      def inline?: () -> bool
+      def size: () -> Integer
+      def to_h: () -> Hash[Symbol, String]
+      def ==: (untyped other) -> bool
+      alias eql? ==
+      def hash: () -> Integer
+      def inspect: () -> String
+      alias to_s inspect
+      def pretty_print: (untyped printer) -> void
+    end
+  end
+end

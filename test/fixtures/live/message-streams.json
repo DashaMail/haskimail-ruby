@@ -1,0 +1,19 @@
+{
+  "TotalCount": 2,
+  "MessageStreams": [
+    {
+      "ID": "2081",
+      "ServerID": 11834,
+      "Name": "Транзакционный по-умолчанию",
+      "MessageStreamType": "transactional",
+      "ArchivedAt": null
+    },
+    {
+      "ID": "2082",
+      "ServerID": 11834,
+      "Name": "Входящий по-умолчанию",
+      "MessageStreamType": "inbound",
+      "ArchivedAt": null
+    }
+  ]
+}

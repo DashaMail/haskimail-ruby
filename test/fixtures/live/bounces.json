@@ -1,0 +1,19 @@
+{
+  "TotalCount": 1,
+  "Bounces": [
+    {
+      "Type": "HardBounce",
+      "Name": "Hard bounce",
+      "Email": "admin@unknown.example",
+      "RecordType": "Bounce",
+      "MessageID": "5f60718293a4b5c6d7e8f90a1b2c3d4e",
+      "ServerID": 11834,
+      "MessageStream": "2081",
+      "Description": "Email-адрес help@example.org не подтвержден в качестве отправителя!",
+      "BouncedAt": "2026-10-17 00:28:04",
+      "TypeCode": "675",
+      "Subject": "Тема письма",
+      "Tag": "0"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+plugins:
+  - rubocop-minitest
+  - rubocop-performance
+  - rubocop-rake
+
+AllCops:
+  TargetRubyVersion: 3.1
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - "vendor/**/*"
+    - "pkg/**/*"
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/Documentation:
+  Exclude:
+    - "test/**/*"
+
+Layout/LineLength:
+  Max: 120
+
+Metrics/ClassLength:
+  Max: 200
+  Exclude:
+    - "test/**/*"
+
+Metrics/MethodLength:
+  Max: 25
+  Exclude:
+    - "test/**/*"
+
+Metrics/AbcSize:
+  Max: 30
+  Exclude:
+    - "test/**/*"
+
+Metrics/CyclomaticComplexity:
+  Max: 12
+
+Metrics/PerceivedComplexity:
+  Max: 12
+
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+Metrics/ModuleLength:
+  Exclude:
+    - "lib/haskimail/errors.rb" # one constant per documented ErrorCode
+    - "lib/haskimail/util.rb" # internal helper collection
+    - "test/**/*"
+
+Metrics/BlockLength:
+  Exclude:
+    - "test/**/*"
+    - "*.gemspec"
+
+Naming/PredicateMethod:
+  Enabled: false
+
+Minitest/MultipleAssertions:
+  Enabled: false
+
+# Contract-style tests assert after every step; blank lines would only add noise.
+Minitest/EmptyLineBeforeAssertionMethods:
+  Enabled: false
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: either
+
+Style/FormatStringToken:
+  Exclude:
+    - "test/test_helper.rb"

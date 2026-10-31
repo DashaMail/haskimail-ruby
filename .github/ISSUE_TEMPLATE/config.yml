@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Документация Haskimail API
+    url: https://haskimail.ru/developer
+    about: Описание методов, полей и кодов ошибок
+  - name: Поддержка Haskimail
+    url: https://haskimail.ru
+    about: Вопросы по аккаунту, отправке и доставляемости — support@haskimail.ru

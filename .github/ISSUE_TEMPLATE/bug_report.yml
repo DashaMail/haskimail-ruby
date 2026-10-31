@@ -1,0 +1,29 @@
+name: Ошибка
+description: SDK работает не так, как описано в документации
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Уязвимости не публикуйте здесь — см. SECURITY.md. Не прикладывайте токены и персональные данные.
+  - type: textarea
+    id: what
+    attributes:
+      label: Что произошло
+      description: Код, который воспроизводит проблему, и полученная ошибка или ответ.
+      render: ruby
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Что ожидалось
+      description: Со ссылкой на раздел https://haskimail.ru/developer, если возможно.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Версии
+      placeholder: "haskimail 1.0.0, ruby 3.4.1, Rails 8.0"
+    validations:
+      required: true

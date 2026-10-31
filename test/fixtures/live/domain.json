@@ -1,0 +1,20 @@
+{
+  "ID": 4521,
+  "Name": "example.com",
+  "DKIMVerified": true,
+  "WeakDKIM": false,
+  "SPFVerified": true,
+  "ReturnPathDomainVerified": true,
+  "SPFTextValue": {
+    "valid": 1,
+    "name": "example.com.",
+    "record_type": "TXT",
+    "value": "v=spf1 include:_spf.yandex.net  include:_spf.haskisender.ru ~all"
+  },
+  "DKIMTextValue": {
+    "valid": 1,
+    "name": "dm._domainkey.example.com.",
+    "record_type": "TXT",
+    "value": "v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC0000;t=s"
+  }
+}

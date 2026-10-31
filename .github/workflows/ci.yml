@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Weekly run against freshly resolved dependencies (no committed lockfile):
+    # catches breaking upstream releases such as json 3.0.
+    - cron: "17 5 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Third-party actions are pinned to full commit SHAs (the tag is in the
+# comment); Dependabot keeps the pins up to date.
+jobs:
+  test:
+    name: Ruby ${{ matrix.ruby }} / json ${{ matrix.json }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.1", "3.2", "3.3", "3.4", "4.0"]
+        json: ["default"]
+        include:
+          # json 3 changed parser options; json 2.7 is the oldest supported.
+          - { ruby: "3.1", json: "~> 2.7.0" }
+          - { ruby: "3.4", json: ">= 3.0" }
+          - { ruby: "4.0", json: ">= 3.0" }
+    env:
+      BUNDLE_WITHOUT: lint
+      JSON_VERSION: ${{ matrix.json != 'default' && matrix.json || '' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: json version under test
+        run: bundle exec ruby -rjson -e 'puts JSON::VERSION'
+      - name: Tests (100% line and branch coverage, Ruby warnings from lib/ fail the run)
+        run: bundle exec rake coverage
+      - name: Fuzzing with a random seed (reproduce with the printed FUZZ_SEED)
+        run: |
+          export FUZZ_SEED=$RANDOM FUZZ_ITERATIONS=3000 COVERAGE=0
+          echo "FUZZ_SEED=$FUZZ_SEED"
+          bundle exec ruby -Itest test/unit/fuzz_test.rb
+      - name: Examples are valid Ruby
+        run: for file in examples/*.rb; do ruby -wc "$file"; done
+
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+      - name: RuboCop
+        run: bundle exec rubocop
+      - name: RBS signatures
+        run: bundle exec rake rbs
+      - name: Type check lib/ against sig/ (Steep)
+        run: bundle exec steep check
+      - name: Every public object is documented (YARD)
+        run: |
+          bundle exec yard doc --fail-on-warning --no-save --no-output
+          bundle exec yard stats --list-undoc | tee /dev/stderr | grep -q "100.00% documented"
+      - name: Gem builds without warnings
+        run: gem build haskimail.gemspec --strict
+      - name: Audit dependencies
+        run: bundle exec bundle-audit check --update

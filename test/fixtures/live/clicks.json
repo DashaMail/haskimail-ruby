@@ -1,0 +1,41 @@
+{
+  "TotalCount": 4,
+  "Clicks": [
+    {
+      "Recipient": "petr@example.com",
+      "ReceivedAt": "2026-10-21 17:51:09",
+      "Tag": "0",
+      "From": "",
+      "MessageID": "2c3d4e5f60718293a4b5c6d7e8f90a1b",
+      "Subject": "123🚀",
+      "MessageStream": "2083",
+      "RecordType": "Click",
+      "Os": "Windows 10",
+      "Browser": "Chrome",
+      "Webservice": "mail",
+      "UserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "Language": "ru-RU,ru",
+      "Region": "0",
+      "Country": "CZ",
+      "OriginalLink": "https://haskimail.ru/orders/1042"
+    },
+    {
+      "Recipient": "petr@example.com",
+      "ReceivedAt": "2026-10-21 17:50:55",
+      "Tag": "0",
+      "From": "",
+      "MessageID": "3d4e5f60718293a4b5c6d7e8f90a1b2c",
+      "Subject": "123🚀",
+      "MessageStream": "2083",
+      "RecordType": "Click",
+      "Os": "Android 10",
+      "Browser": "Chrome Mobile",
+      "Webservice": "",
+      "UserAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Mobile Safari/537.36",
+      "Language": "ru-RU",
+      "Region": "54",
+      "Country": "RU",
+      "OriginalLink": "https://haskimail.ru/orders/1042"
+    }
+  ]
+}

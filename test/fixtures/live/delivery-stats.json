@@ -1,0 +1,28 @@
+{
+  "Bounces": [
+    {
+      "Name": "All",
+      "Count": 1
+    },
+    {
+      "Type": "HardBounce",
+      "Name": "Hard bounce",
+      "Count": 1
+    },
+    {
+      "Type": "BulkBounce",
+      "Name": "Bulk bounce",
+      "Count": 0
+    },
+    {
+      "Type": "SoftBounce",
+      "Name": "Soft bounce",
+      "Count": 0
+    },
+    {
+      "Type": "SpamBlock",
+      "Name": "Spam block",
+      "Count": 0
+    }
+  ]
+}

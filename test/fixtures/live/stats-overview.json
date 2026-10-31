@@ -1,0 +1,13 @@
+{
+  "Sent": 71,
+  "Bounced": 1,
+  "Opened": 27,
+  "Clicked": 4,
+  "Unsubscribed": 0,
+  "Unsubsribed": 0,
+  "SpamComplaints": 0,
+  "BounceRate": 1.41,
+  "SpamComplaintsRate": 0,
+  "OpenRate": 38.03,
+  "ClickRate": 5.63
+}
