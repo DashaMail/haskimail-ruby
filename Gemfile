@@ -14,7 +14,7 @@ gem "json", ENV["JSON_VERSION"] if ENV["JSON_VERSION"]
 
 group :test do
   gem "logger", "~> 1.6" # no longer a default gem on Ruby 4.0
-  gem "minitest", "~> 5.20"
+  gem "minitest", "~> 6.0"
   gem "rake", "~> 13.0"
 end
 
