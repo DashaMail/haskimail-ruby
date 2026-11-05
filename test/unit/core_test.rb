@@ -113,7 +113,7 @@ module Haskimail
       assert_equal "TemplateId", Util.api_key(:template_id)
       assert_equal "ServerID", Util.api_key(:server_id)
       assert_equal "AssociatedServerId", Util.api_key(:associated_server_id)
-      assert_equal "EnableSmtpApiErrorHooks", Util.api_key(:enable_smtp_api_error_hooks)
+      assert_equal "Token", Util.api_key(:token)
       assert_raises(ValidationError) { Util.api_key(1) }
     end
 

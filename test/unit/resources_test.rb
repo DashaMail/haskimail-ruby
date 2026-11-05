@@ -338,9 +338,17 @@ module Haskimail
       assert_equal({ "Name" => "Shop", "Color" => "Purple", "TrackLinks" => "HtmlAndText",
                      "InboundHookUrl" => "https://example.net/in", "DeliveryType" => "Sandbox",
                      "InboundSpamThreshold" => 15, "SmtpApiActivated" => true }, last_json)
-      servers.update(11_834, track_links: false, enable_smtp_api_error_hooks: true)
+      servers.update(11_834, track_links: false, raw_email_enabled: true)
       assert_request :put, "/servers/11834"
-      assert_equal({ "TrackLinks" => false, "EnableSmtpApiErrorHooks" => true }, last_json)
+      assert_equal({ "TrackLinks" => false, "RawEmailEnabled" => true }, last_json)
+
+      servers.issue_token(11_834, name: "Интеграция 1С")
+      assert_request :post, "/servers/11834/tokens/new"
+      assert_equal({ "Name" => "Интеграция 1С" }, last_json)
+
+      servers.issue_token(11_834)
+      assert_nil last_request.body
+
       servers.delete(11_834)
       assert_request :delete, "/servers/11834"
 

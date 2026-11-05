@@ -50,6 +50,7 @@ module Haskimail
       [:put, "/servers/3", ACCOUNT, ->(_s, a) { a.servers.update(3, name: "N") }],
       [:get, "/servers", ACCOUNT, ->(_s, a) { a.servers.list }],
       [:delete, "/servers/3", ACCOUNT, ->(_s, a) { a.servers.delete(3) }],
+      [:post, "/servers/3/tokens/new", ACCOUNT, ->(_s, a) { a.servers.issue_token(3) }],
       # Каналы
       [:get, "/message-streams", SERVER, ->(s, _a) { s.message_streams.list }],
       [:get, "/message-streams/s1", SERVER, ->(s, _a) { s.message_streams.get("s1") }],
@@ -116,7 +117,7 @@ module Haskimail
     end
 
     def test_every_documented_operation_is_implemented
-      assert_equal 61, OPERATIONS.size, "the API reference documents 61 operations"
+      assert_equal 62, OPERATIONS.size, "the API reference documents 62 operations"
       assert_equal OPERATIONS.size, OPERATIONS.map { |op| op[0..1] }.uniq.size
 
       OPERATIONS.each do |method, path, header, call|

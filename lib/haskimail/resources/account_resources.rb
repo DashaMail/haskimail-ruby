@@ -67,6 +67,20 @@ module Haskimail
         object(api_delete(path("/servers/%s", server_id)))
       end
 
+      # POST /servers/{serverid}/tokens/new — issues an additional server API
+      # token. The plain-text value is returned only once, in this response —
+      # treat it as a secret.
+      #
+      #   account.servers.issue_token(11834, name: "Интеграция 1С")
+      #
+      # @param server_id [Integer]
+      # @param name [String, nil] optional token name
+      # @return [ApiObject] Token, ServerId
+      def issue_token(server_id, name: nil)
+        body = name.nil? ? nil : { "Name" => Util.strip_text(name, "token name") }
+        object(api_post(path("/servers/%s/tokens/new", server_id), body, idempotent: false))
+      end
+
       private
 
       def validate!(payload)

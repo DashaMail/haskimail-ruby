@@ -10,7 +10,7 @@
 [![CI](https://github.com/Dashamail/haskimail-ruby/actions/workflows/ci.yml/badge.svg)](https://github.com/Dashamail/haskimail-ruby/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Библиотека для [Haskimail](https://haskimail.ru) — сервиса транзакционных писем. Покрывает все 61 метод
+Библиотека для [Haskimail](https://haskimail.ru) — сервиса транзакционных писем. Покрывает все 62 метода
 [справочника API](https://haskimail.ru/developer): отправку писем и пакетов, шаблоны, поиск сообщений,
 открытия и клики, входящие письма, возвраты, каналы, стоп-листы, вебхуки, правила для входящих,
 статистику, серверы и домены, а также разбор и проверку подписи вебхуков.
@@ -394,7 +394,7 @@ bin/console                 # IRB с загруженным SDK
 
 Тесты не ходят в сеть: юнит-тесты используют подменный транспорт, интеграционные — настоящий
 локальный HTTPS-сервер с самоподписанным сертификатом (TLS, таймауты, gzip, повторы, многопоточность).
-Отдельно есть контрактный тест на все 61 метод справочника, тесты на обезличенных реальных ответах
+Отдельно есть контрактный тест на все 62 метода справочника, тесты на обезличенных реальных ответах
 API и фаззинг со свойствами (`FUZZ_SEED`, `FUZZ_ITERATIONS`). CI гоняет Ruby 3.1–4.0 с json 2.x и 3.x,
 проверяет типы Steep по RBS, 100% документирования YARD и раз в неделю — свежие версии зависимостей.
 Подробнее — в [CONTRIBUTING.md](https://github.com/Dashamail/haskimail-ruby/blob/main/CONTRIBUTING.md),

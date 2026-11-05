@@ -537,6 +537,7 @@ module Haskimail
       def create: (?params? params, **untyped fields) -> ApiObject
       def update: (id server_id, ?params? params, **untyped fields) -> ApiObject
       def delete: (id server_id) -> ApiObject
+      def issue_token: (id server_id, ?name: String?) -> ApiObject
     end
 
     class Domains < Base
